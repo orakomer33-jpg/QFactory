@@ -77,3 +77,15 @@ function startSimulation(){
 alert("Simulation Started");
 
 }
+
+function activateMachine(id){
+
+document.getElementById(id).style.background="#d32f2f";
+
+}
+
+function deactivateMachine(id){
+
+document.getElementById(id).style.background="#43a047";
+
+}
