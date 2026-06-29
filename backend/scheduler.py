@@ -40,7 +40,7 @@ class FIFOScheduler:
 
             for machine_type, duration in operations:
 
-                machine = self.get_available_machine(machine_type)
+                machine = self.choose_machine(machine_type)
 
                 start = max(
 
@@ -71,3 +71,29 @@ class FIFOScheduler:
                 part_finish_time[part] = finish
 
         return schedule
+
+    def choose_machine(self, machine_type):
+
+        machines = self.machine_available[machine_type]
+    
+        earliest = machines[0]
+    
+        for m in machines:
+    
+            if m["available"] < earliest["available"]:
+    
+                earliest = m
+    
+        return earliest
+
+    def calculate_utilization(self):
+
+        utilization = {}
+    
+        for machine_type in self.machine_available:
+    
+            for machine in self.machine_available[machine_type]:
+    
+                utilization[machine["name"]] = machine["available"]
+    
+        return utilization
