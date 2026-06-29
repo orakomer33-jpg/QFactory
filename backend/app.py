@@ -1,20 +1,43 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from scheduler import FIFOScheduler
-from gantt import create_gantt
-scheduler = FIFOScheduler()
 
-schedule = scheduler.schedule()
+app = FastAPI(title="QFactory API")
 
-stats = scheduler.calculate_statistics()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-print("\n========== SCHEDULE ==========\n")
 
-for row in schedule:
+@app.get("/")
+def home():
 
-    print(row)
+    return {
+        "project": "QFactory",
+        "status": "running"
+    }
 
-print("\n========== STATISTICS ==========\n")
 
-for key, value in stats.items():
+@app.get("/schedule")
+def schedule():
 
-    print(key, ":", value)
-create_gantt(schedule)
+    scheduler = FIFOScheduler()
+
+    result = scheduler.schedule()
+
+    return result
+
+
+@app.get("/statistics")
+def statistics():
+
+    scheduler = FIFOScheduler()
+
+    scheduler.schedule()
+
+    return scheduler.calculate_statistics()
