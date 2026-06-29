@@ -50,3 +50,9 @@ print("Idle Time")
 for machine, value in stats["idle"].items():
 
     print(machine, ":", value, "minutes")
+
+from simulation import FactorySimulation
+
+simulation = FactorySimulation(schedule)
+
+simulation.play()
