@@ -1,26 +1,15 @@
-from data import MACHINES
-from data import PARTS
-from data import PROCESS_PLAN
+from scheduler import FIFOScheduler
 
+scheduler = FIFOScheduler()
 
-print("========== QFactory ==========")
-
-print()
-
-print("Factory Machines")
-
-print(MACHINES)
+result = scheduler.schedule()
 
 print()
 
-print("Aircraft Parts")
-
-print(PARTS)
+print("===== FIFO SCHEDULE =====")
 
 print()
 
-print("Process Plans")
+for row in result:
 
-for part, operations in PROCESS_PLAN.items():
-
-    print(part, operations)
+    print(row)
