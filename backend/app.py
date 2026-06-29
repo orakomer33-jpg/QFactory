@@ -2,14 +2,18 @@ from scheduler import FIFOScheduler
 
 scheduler = FIFOScheduler()
 
-result = scheduler.schedule()
+schedule = scheduler.schedule()
 
 print()
 
-print("===== FIFO SCHEDULE =====")
+print("===== SCHEDULE =====")
 
-print()
-
-for row in result:
+for row in schedule:
 
     print(row)
+
+print()
+
+print("===== MACHINE TIMES =====")
+
+print(scheduler.calculate_utilization())
