@@ -74,7 +74,57 @@ startButton.addEventListener("click",startSimulation);
 
 function startSimulation(){
 
-alert("Simulation Started");
+async function startSimulation(){
+
+activateMachine("CNC-1")
+
+await sleep(2000)
+
+deactivateMachine("CNC-1")
+
+activateMachine("DRILL-1")
+
+await sleep(2000)
+
+deactivateMachine("DRILL-1")
+
+activateMachine("REAMING")
+
+await sleep(2000)
+
+deactivateMachine("REAMING")
+
+activateMachine("BORING")
+
+await sleep(2000)
+
+deactivateMachine("BORING")
+
+activateMachine("DEBURRING")
+
+await sleep(2000)
+
+deactivateMachine("DEBURRING")
+
+activateMachine("CLEANING")
+
+await sleep(2000)
+
+deactivateMachine("CLEANING")
+
+activateMachine("RIVETING-1")
+
+await sleep(2000)
+
+deactivateMachine("RIVETING-1")
+
+activateMachine("CMM")
+
+await sleep(2000)
+
+deactivateMachine("CMM")
+
+}
 
 }
 
