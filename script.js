@@ -110,7 +110,7 @@ async function startSimulation(){
 
         console.log(statistics);
 
-        showSchedule(schedule);
+        await animateSchedule(schedule);
 
         showStatistics(statistics);
 
@@ -180,6 +180,29 @@ function showSchedule(schedule){
 
 }
 
+async function animateSchedule(schedule){
+
+    for(const op of schedule){
+
+        simulationArea.innerHTML=`
+
+        <h2>${op.part}</h2>
+
+        <h3>${op.operation}</h3>
+
+        <h1>${op.machine}</h1>
+
+        `;
+
+        setMachineBusy(op.machine);
+
+        await sleep(800);
+
+        setMachineIdle(op.machine);
+
+    }
+
+}
 // =====================================
 // Statistics
 // =====================================
@@ -201,5 +224,41 @@ function showStatistics(stats){
     <p><b>Parts:</b> ${stats.parts}</p>
 
     `;
+
+}
+
+function sleep(ms){
+
+    return new Promise(resolve=>setTimeout(resolve,ms));
+
+}
+
+function setMachineBusy(machine){
+
+    document.querySelectorAll(".machine").forEach(card=>{
+
+        if(card.innerText.includes(machine)){
+
+            card.style.background="#d32f2f";
+            card.style.color="white";
+
+        }
+
+    });
+
+}
+
+function setMachineIdle(machine){
+
+    document.querySelectorAll(".machine").forEach(card=>{
+
+        if(card.innerText.includes(machine)){
+
+            card.style.background="#43a047";
+            card.style.color="white";
+
+        }
+
+    });
 
 }
