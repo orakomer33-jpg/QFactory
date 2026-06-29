@@ -1,57 +1,70 @@
-import plotly.express as px
-import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def create_gantt(schedule):
 
-    rows = []
+    fig, ax = plt.subplots(figsize=(14, 8))
+
+    machines = sorted(list(set(op["machine"] for op in schedule)))
+
+    y_positions = {}
+
+    for i, machine in enumerate(machines):
+        y_positions[machine] = i
+
+    colors = {
+        "P101": "tab:blue",
+        "P102": "tab:orange",
+        "P103": "tab:green",
+        "P104": "tab:red",
+        "P105": "tab:purple",
+        "P106": "tab:brown"
+    }
 
     for op in schedule:
 
-        rows.append({
+        y = y_positions[op["machine"]]
 
-            "Machine": op["machine"],
+        ax.barh(
 
-            "Part": op["part"],
+            y,
 
-            "Start": op["start"],
+            op["duration"],
 
-            "Finish": op["finish"],
+            left=op["start"],
 
-            "Operation": op["operation"]
+            color=colors.get(op["part"], "gray"),
 
-        })
+            edgecolor="black"
 
-    df = pd.DataFrame(rows)
+        )
 
-    fig = px.timeline(
+        ax.text(
 
-        df,
+            op["start"] + op["duration"]/2,
 
-        x_start="Start",
+            y,
 
-        x_end="Finish",
+            op["part"],
 
-        y="Machine",
+            ha="center",
 
-        color="Part",
+            va="center",
 
-        hover_data=["Operation"]
+            fontsize=8,
 
-    )
+            color="white"
 
-    fig.update_yaxes(autorange="reversed")
+        )
 
-    fig.update_layout(
+    ax.set_yticks(list(y_positions.values()))
 
-        title="Aircraft Production Schedule",
+    ax.set_yticklabels(list(y_positions.keys()))
 
-        xaxis_title="Time (minutes)",
+    ax.set_xlabel("Time (minutes)")
 
-        yaxis_title="Machines",
+    ax.set_title("QFactory - FIFO Production Schedule")
 
-        template="plotly_white"
+    plt.tight_layout()
 
-    )
-
-    fig.show()
+    plt.show()
