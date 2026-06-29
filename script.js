@@ -67,3 +67,13 @@ card.className="machine"
 machineDiv.appendChild(card)
 
 })
+
+const startButton=document.getElementById("startButton");
+
+startButton.addEventListener("click",startSimulation);
+
+function startSimulation(){
+
+alert("Simulation Started");
+
+}
