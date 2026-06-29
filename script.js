@@ -139,3 +139,9 @@ function deactivateMachine(id){
 document.getElementById(id).style.background="#43a047";
 
 }
+
+function sleep(ms){
+
+return new Promise(resolve=>setTimeout(resolve,ms))
+
+}
