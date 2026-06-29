@@ -149,3 +149,4 @@ class FIFOScheduler:
             "bottleneck": bottleneck
     
         }
+return schedule
