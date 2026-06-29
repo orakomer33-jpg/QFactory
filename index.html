@@ -4,7 +4,6 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>QFactory</title>
@@ -15,114 +14,332 @@
 
 <body>
 
-<div class="header">
-
-<h1>QFactory</h1>
-
-<p>Aircraft Manufacturing Digital Twin</p>
-
-</div>
-
 <div class="container">
 
-<div class="left-panel">
+    <!-- ================= HEADER ================= -->
 
-<h2>Production Orders</h2>
+    <header class="header">
 
-<div id="orders"></div>
+        <div class="logo">
+
+            <h1>QFactory</h1>
+
+            <p>Aircraft Manufacturing Digital Twin</p>
+
+        </div>
+
+        <div class="timerCard">
+
+            <span>Production Time</span>
+
+            <h2 id="timer">0 min</h2>
+
+        </div>
+
+        <div class="controls">
+
+            <button id="startButton" class="startBtn">
+
+                ▶ Start
+
+            </button>
+
+            <button id="pauseButton">
+
+                ❚❚ Pause
+
+            </button>
+
+        </div>
+
+        <div class="kpi">
+
+            <div class="kpiCard">
+
+                <span>Makespan</span>
+
+                <h3 id="makespan">0</h3>
+
+            </div>
+
+            <div class="kpiCard">
+
+                <span>Utilization</span>
+
+                <h3 id="utilization">0%</h3>
+
+            </div>
+
+            <div class="kpiCard">
+
+                <span>Bottleneck</span>
+
+                <h3 id="bottleneck">-</h3>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="mainArea">
+
+        <!-- LEFT PANEL -->
+
+        <section class="partsPanel">
+
+            <h2>PARTS</h2>
+
+            <div id="partsContainer">
+
+            </div>
+
+        </section>
+
+
+
+        <!-- CENTER -->
+
+        <section class="factoryPanel">
+
+            <h2>FACTORY FLOOR</h2>
+
+            <div id="factoryArea">
+
+
+
+
+                <!-- SVG burada olacak -->
+
+                <svg id="factorySvg">
+
+
+
+                </svg>
+
+
+
+
+                <!-- MACHINE CARDS -->
+
+                <div id="machineArea">
+
+
+
+                    <div class="machineCard" id="CNC-1">
+
+                        <h3>CNC-1</h3>
+
+                        <span class="currentPart">IDLE</span>
+
+                    </div>
+
+
+
+                    <div class="machineCard" id="CNC-2">
+
+                        <h3>CNC-2</h3>
+
+                        <span class="currentPart">IDLE</span>
+
+                    </div>
+
+
+
+                    <div class="machineCard" id="DRILL-1">
+
+                        <h3>DRILL-1</h3>
+
+                        <span class="currentPart">IDLE</span>
+
+                    </div>
+
+
+
+                    <div class="machineCard" id="DRILL-2">
+
+                        <h3>DRILL-2</h3>
+
+                        <span class="currentPart">IDLE</span>
+
+                    </div>
+
+
+
+                    <div class="machineCard" id="REAMING-1">
+
+                        <h3>REAMING</h3>
+
+                        <span class="currentPart">IDLE</span>
+
+                    </div>
+
+
+
+                    <div class="machineCard" id="BORING-1">
+
+                        <h3>BORING</h3>
+
+                        <span class="currentPart">IDLE</span>
+
+                    </div>
+
+
+
+                    <div class="machineCard" id="DEBURRING-1">
+
+                        <h3>DEBURRING</h3>
+
+                        <span class="currentPart">IDLE</span>
+
+                    </div>
+
+
+
+                    <div class="machineCard" id="CLEANING-1">
+
+                        <h3>CLEANING</h3>
+
+                        <span class="currentPart">IDLE</span>
+
+                    </div>
+
+
+
+                    <div class="machineCard" id="RIVETING-1">
+
+                        <h3>RIVETING-1</h3>
+
+                        <span class="currentPart">IDLE</span>
+
+                    </div>
+
+
+
+                    <div class="machineCard" id="RIVETING-2">
+
+                        <h3>RIVETING-2</h3>
+
+                        <span class="currentPart">IDLE</span>
+
+                    </div>
+
+
+
+                    <div class="machineCard" id="CMM-1">
+
+                        <h3>CMM</h3>
+
+                        <span class="currentPart">IDLE</span>
+
+                    </div>
+
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- RIGHT PANEL -->
+
+        <section class="machineStatusPanel">
+
+            <h2>MACHINE STATUS</h2>
+
+            <div id="machineStatusContainer">
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+      <!-- ================= BOTTOM PANEL ================= -->
+
+    <section class="bottomPanel">
+
+        <div class="tabs">
+
+            <button class="tabButton active" id="partsTab">
+                Parts
+            </button>
+
+            <button class="tabButton" id="machinesTab">
+                Machines
+            </button>
+
+            <button class="tabButton" id="statisticsTab">
+                Statistics
+            </button>
+
+            <button class="tabButton" id="ganttTab">
+                Gantt Chart
+            </button>
+
+        </div>
+
+
+
+        <div class="bottomContent">
+
+
+
+            <!-- LEFT INFORMATION -->
+
+            <div class="informationPanel">
+
+                <h2 id="panelTitle">
+
+                    Select a Part
+
+                </h2>
+
+                <div id="informationContent">
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RIGHT CHART -->
+
+            <div class="chartPanel">
+
+                <h2>
+
+                    Production Timeline
+
+                </h2>
+
+                <div id="ganttChart">
+
+                </div>
+
+            </div>
+
+
+
+        </div>
+
+    </section>
 
 </div>
 
-<div class="center-panel">
 
-<h2>Factory</h2>
-<button id="startButton">▶ Start Simulation</button>
 
-<div id="simulationArea"></div>
+<!-- ================= SCRIPTS ================= -->
 
-<div id="factory">
-
-<div class="row">
-
-<div class="machine-box" id="CNC-1">CNC-1</div>
-
-<div class="machine-box" id="CNC-2">CNC-2</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="DRILL-1">DRILL-1</div>
-
-<div class="machine-box" id="DRILL-2">DRILL-2</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="REAMING">REAMING</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="BORING">BORING</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="DEBURRING">DEBURRING</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="CLEANING">CLEANING</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="RIVETING-1">RIVETING-1</div>
-
-<div class="machine-box" id="RIVETING-2">RIVETING-2</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="CMM">CMM</div>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="right-panel">
-
-<h2>Machine Status</h2>
-
-<div id="machines"></div>
-
-</div>
-
-</div>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
 <script src="script.js"></script>
 
