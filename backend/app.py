@@ -1,58 +1,34 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from scheduler import FIFOScheduler
-from gantt import create_gantt
 
-scheduler = FIFOScheduler()
+app = FastAPI(title="QFactory API")
 
-schedule = scheduler.schedule()
-stats = scheduler.calculate_statistics(schedule)
-print()
+# Frontend'in API'ye erişebilmesi için
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-print("===== SCHEDULE =====")
 
-for row in schedule:
+@app.get("/")
+def home():
 
-    print(row)
+    return {
+        "project": "QFactory",
+        "status": "running"
+    }
 
-print()
 
-print("===== MACHINE TIMES =====")
+@app.get("/schedule")
+def schedule():
 
-print(scheduler.calculate_utilization())
-create_gantt(schedule)
-print()
+    scheduler = FIFOScheduler()
 
-print("========== KPI ==========")
+    result = scheduler.schedule()
 
-print()
-
-print("Makespan")
-
-print(stats["makespan"], "minutes")
-
-print()
-
-print("Bottleneck")
-
-print(stats["bottleneck"])
-
-print()
-
-print("Machine Utilization")
-
-for machine, value in stats["utilization"].items():
-
-    print(machine, ":", value, "%")
-
-print()
-
-print("Idle Time")
-
-for machine, value in stats["idle"].items():
-
-    print(machine, ":", value, "minutes")
-
-from simulation import FactorySimulation
-
-simulation = FactorySimulation(schedule)
-
-simulation.play()
+    return result
