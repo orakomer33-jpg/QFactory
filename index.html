@@ -7,11 +7,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>QFactory Digital Twin</title>
+<title>QFactory</title>
 
 <link rel="stylesheet" href="style.css">
-
-<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 
 </head>
 
@@ -19,293 +17,39 @@
 
 <div class="header">
 
-    <div class="logoArea">
+<h1>QFactory</h1>
 
-        <h1>QFactory</h1>
-
-        <span>Aircraft Manufacturing Digital Twin</span>
-
-    </div>
+<p>Aircraft Manufacturing Digital Twin</p>
 
 </div>
 
+<div class="container">
 
-<div class="mainContainer">
+<div class="left-panel">
 
-    <!-- LEFT PANEL -->
+<h2>Production Orders</h2>
 
-    <div class="leftPanel">
-
-        <h2>Production Orders</h2>
-
-        <div id="orders">
-
-        </div>
-
-    </div>
-
-
-    <!-- CENTER PANEL -->
-
-    <div class="centerPanel">
-
-        <div class="toolbar">
-
-            <button id="startButton">
-
-                ▶ Start Simulation
-
-            </button>
-
-        </div>
-
-        <div id="informationContent">
-
-        </div>
-
-        <div id="factoryArea">
-
-            <div class="row">
-
-                <div class="machineCard" id="CNC-1">
-
-                    <h3>CNC-1</h3>
-
-                    <span class="currentPart">
-
-                        IDLE
-
-                    </span>
-
-                </div>
-
-                <div class="machineCard" id="CNC-2">
-
-                    <h3>CNC-2</h3>
-
-                    <span class="currentPart">
-
-                        IDLE
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div class="arrow">↓</div>
-
-            <div class="row">
-
-                <div class="machineCard" id="DRILL-1">
-
-                    <h3>DRILL-1</h3>
-
-                    <span class="currentPart">
-
-                        IDLE
-
-                    </span>
-
-                </div>
-
-                <div class="machineCard" id="DRILL-2">
-
-                    <h3>DRILL-2</h3>
-
-                    <span class="currentPart">
-
-                        IDLE
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div class="arrow">↓</div>
-
-            <div class="row">
-
-                <div class="machineCard single"
-
-                    id="REAMING-1">
-
-                    <h3>REAMING</h3>
-
-                    <span class="currentPart">
-
-                        IDLE
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div class="arrow">↓</div>
-
-            <div class="row">
-
-                <div class="machineCard single"
-
-                    id="BORING-1">
-
-                    <h3>BORING</h3>
-
-                    <span class="currentPart">
-
-                        IDLE
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div class="arrow">↓</div>
-
-            <div class="row">
-
-                <div class="machineCard single"
-
-                    id="DEBURRING-1">
-
-                    <h3>DEBURRING</h3>
-
-                    <span class="currentPart">
-
-                        IDLE
-
-                    </span>
-
-                </div>
-
-            </div>
-            <div class="arrow">↓</div>
-
-            <div class="row">
-
-                <div class="machineCard single"
-                    id="CLEANING-1">
-
-                    <h3>CLEANING</h3>
-
-                    <span class="currentPart">
-
-                        IDLE
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div class="arrow">↓</div>
-
-            <div class="row">
-
-                <div class="machineCard"
-                    id="RIVETING-1">
-
-                    <h3>RIVETING-1</h3>
-
-                    <span class="currentPart">
-
-                        IDLE
-
-                    </span>
-
-                </div>
-
-                <div class="machineCard"
-                    id="RIVETING-2">
-
-                    <h3>RIVETING-2</h3>
-
-                    <span class="currentPart">
-
-                        IDLE
-
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div class="arrow">↓</div>
-
-            <div class="row">
-
-                <div class="machineCard single"
-                    id="CMM-1">
-
-                    <h3>CMM</h3>
-
-                    <span class="currentPart">
-
-                        IDLE
-
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- RIGHT PANEL -->
-
-    <div class="rightPanel">
-
-        <h2>Machine Status</h2>
-
-        <div id="machines">
-
-        </div>
-
-    </div>
+<div id="orders"></div>
 
 </div>
 
+<div class="center-panel">
 
+<h2>Factory</h2>
 
-<!-- BOTTOM PANEL -->
-
-<div class="bottomPanel">
-
-    <div class="tabs">
-
-        <button class="tabButton active">
-
-            Parts
-
-        </button>
-
-        <button class="tabButton">
-
-            Machines
-
-        </button>
-
-        <button class="tabButton">
-
-            Statistics
-
-        </button>
-
-    </div>
-
-    <div id="bottomContent">
-
-    </div>
+<div id="factory"></div>
 
 </div>
 
+<div class="right-panel">
 
+<h2>Machine Status</h2>
+
+<div id="machines"></div>
+
+</div>
+
+</div>
 
 <script src="script.js"></script>
 
