@@ -1,78 +1,191 @@
-const parts=[
+// ===============================
+// QFactory
+// Aircraft Manufacturing Simulator
+// ===============================
 
-"Wing Bracket",
+// Production Orders
 
-"Frame Support",
+const parts = [
+    "Wing Bracket",
+    "Frame Support",
+    "Spar Joint",
+    "Stringer Bracket",
+    "Bulkhead Plate",
+    "Seat Rail Support"
+];
 
-"Spar Joint",
+// Factory Machines
 
-"Stringer Bracket",
+const machines = [
+    "CNC-1",
+    "CNC-2",
+    "DRILL-1",
+    "DRILL-2",
+    "REAMING",
+    "BORING",
+    "DEBURRING",
+    "CLEANING",
+    "RIVETING-1",
+    "RIVETING-2",
+    "CMM"
+];
 
-"Bulkhead Plate",
+// -------------------------------
+// Production Orders
+// -------------------------------
 
-"Seat Rail Support"
+const orderDiv = document.getElementById("orders");
 
-]
+parts.forEach(part => {
 
-const machines=[
+    const card = document.createElement("div");
 
-"CNC-1",
+    card.innerHTML = part;
 
-"CNC-2",
+    card.className = "card";
 
-"DRILL-1",
+    orderDiv.appendChild(card);
 
-"DRILL-2",
+});
 
-"REAMING",
+// -------------------------------
+// Machine Status
+// -------------------------------
 
-"BORING",
+const machineDiv = document.getElementById("machines");
 
-"DEBURRING",
+machines.forEach(machine => {
 
-"CLEANING",
+    const card = document.createElement("div");
 
-"RIVETING-1",
+    card.innerHTML = "🟢 " + machine;
 
-"RIVETING-2",
+    card.className = "machine";
 
-"CMM"
+    card.id = "status-" + machine;
 
-]
+    machineDiv.appendChild(card);
 
-const orderDiv=document.getElementById("orders")
+});
 
-parts.forEach(part=>{
+// -------------------------------
+// Button
+// -------------------------------
 
-const card=document.createElement("div")
+const startButton = document.getElementById("startButton");
 
-card.innerHTML=part
+startButton.addEventListener("click", startSimulation);
 
-card.className="card"
+// -------------------------------
+// Machine Color Functions
+// -------------------------------
 
-orderDiv.appendChild(card)
+function activateMachine(id){
 
-})
+    const machine = document.getElementById(id);
 
-const machineDiv=document.getElementById("machines")
+    if(machine){
 
-machines.forEach(machine=>{
+        machine.style.background = "#d32f2f";
 
-const card=document.createElement("div")
+    }
 
-card.innerHTML="🟢 "+machine
+}
 
-card.className="machine"
+function deactivateMachine(id){
 
-machineDiv.appendChild(card)
+    const machine = document.getElementById(id);
 
-})
-const startButton=document.getElementById("startButton");
+    if(machine){
 
-startButton.addEventListener("click",startSimulation);
+        machine.style.background = "#43a047";
 
-function startSimulation(){
+    }
 
-alert("Simulation Started");
+}
+
+// -------------------------------
+// Sleep
+// -------------------------------
+
+function sleep(ms){
+
+    return new Promise(resolve => setTimeout(resolve, ms));
+
+}
+
+// -------------------------------
+// Simulation
+// -------------------------------
+
+async function startSimulation(){
+
+    startButton.disabled = true;
+
+    // CNC
+
+    activateMachine("CNC-1");
+
+    await sleep(1500);
+
+    deactivateMachine("CNC-1");
+
+    // DRILL
+
+    activateMachine("DRILL-1");
+
+    await sleep(1500);
+
+    deactivateMachine("DRILL-1");
+
+    // REAMING
+
+    activateMachine("REAMING");
+
+    await sleep(1500);
+
+    deactivateMachine("REAMING");
+
+    // BORING
+
+    activateMachine("BORING");
+
+    await sleep(1500);
+
+    deactivateMachine("BORING");
+
+    // DEBURRING
+
+    activateMachine("DEBURRING");
+
+    await sleep(1500);
+
+    deactivateMachine("DEBURRING");
+
+    // CLEANING
+
+    activateMachine("CLEANING");
+
+    await sleep(1500);
+
+    deactivateMachine("CLEANING");
+
+    // RIVETING
+
+    activateMachine("RIVETING-1");
+
+    await sleep(1500);
+
+    deactivateMachine("RIVETING-1");
+
+    // CMM
+
+    activateMachine("CMM");
+
+    await sleep(1500);
+
+    deactivateMachine("CMM");
+
+    startButton.disabled = false;
 
 }
