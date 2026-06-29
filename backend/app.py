@@ -1,34 +1,19 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-
 from scheduler import FIFOScheduler
 
-app = FastAPI(title="QFactory API")
+scheduler = FIFOScheduler()
 
-# Frontend'in API'ye erişebilmesi için
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+schedule = scheduler.schedule()
 
+stats = scheduler.calculate_statistics()
 
-@app.get("/")
-def home():
+print("\n========== SCHEDULE ==========\n")
 
-    return {
-        "project": "QFactory",
-        "status": "running"
-    }
+for row in schedule:
 
+    print(row)
 
-@app.get("/schedule")
-def schedule():
+print("\n========== STATISTICS ==========\n")
 
-    scheduler = FIFOScheduler()
+for key, value in stats.items():
 
-    result = scheduler.schedule()
-
-    return result
+    print(key, ":", value)
