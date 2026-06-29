@@ -1,517 +1,205 @@
-/*====================================================
-QFactory Digital Twin
-Simple Version
-====================================================*/
+// =====================================
+// QFactory Frontend
+// =====================================
 
-const API_URL="https://qfactory.onrender.com";
+const API_URL = "https://qfactory.onrender.com";
 
-let schedule=[];
-let statistics={};
-
-let currentMinute=0;
-let simulation=null;
-
-const partsContainer=document.getElementById("partsContainer");
-const machineStatusContainer=document.getElementById("machineStatusContainer");
-const informationContent=document.getElementById("informationContent");
-
-const timer=document.getElementById("timer");
-const makespan=document.getElementById("makespan");
-const utilization=document.getElementById("utilization");
-const bottleneck=document.getElementById("bottleneck");
-
-const startButton=document.getElementById("startButton");
-const pauseButton=document.getElementById("pauseButton");
-
-const PARTS=[
-"P101",
-"P102",
-"P103",
-"P104",
-"P105",
-"P106"
+const parts = [
+    "Wing Bracket",
+    "Frame Support",
+    "Spar Joint",
+    "Stringer Bracket",
+    "Bulkhead Plate",
+    "Seat Rail Support"
 ];
 
-const PART_NAMES={
-
-P101:"Wing Bracket",
-P102:"Frame Support",
-P103:"Spar Joint",
-P104:"Stringer Bracket",
-P105:"Bulkhead Plate",
-P106:"Seat Rail Support"
-
-};
-
-const MACHINES=[
-
-"CNC-1",
-"CNC-2",
-"DRILL-1",
-"DRILL-2",
-"REAMING-1",
-"BORING-1",
-"DEBURRING-1",
-"CLEANING-1",
-"RIVETING-1",
-"RIVETING-2",
-"CMM-1"
-
+const machines = [
+    "CNC-1",
+    "CNC-2",
+    "DRILL-1",
+    "DRILL-2",
+    "REAMING",
+    "BORING",
+    "DEBURRING",
+    "CLEANING",
+    "RIVETING-1",
+    "RIVETING-2",
+    "CMM"
 ];
 
-window.onload=async()=>{
+const orderDiv = document.getElementById("orders");
+const machineDiv = document.getElementById("machines");
+const startButton = document.getElementById("startButton");
+const simulationArea = document.getElementById("simulationArea");
 
-await loadBackend();
+// ----------------------
+// Üretim emirlerini oluştur
+// ----------------------
 
-createParts();
+parts.forEach(part => {
 
-createMachinePanel();
+    const card = document.createElement("div");
 
-updateStatistics();
+    card.className = "card";
 
-informationContent.innerHTML=
+    card.innerHTML = part;
 
-"<h2>Ready</h2><br>Press START.";
-
-};
-
-async function loadBackend(){
-
-schedule=
-await fetch(API_URL+"/schedule")
-.then(r=>r.json());
-
-statistics=
-await fetch(API_URL+"/statistics")
-.then(r=>r.json());
-
-}
-
-function updateStatistics(){
-
-makespan.innerHTML=
-
-statistics.makespan;
-
-bottleneck.innerHTML=
-
-statistics.bottleneck;
-
-let total=0;
-
-let count=0;
-
-for(let key in statistics.utilization){
-
-total+=statistics.utilization[key];
-
-count++;
-
-}
-
-utilization.innerHTML=
-
-(total/count).toFixed(1)+"%";
-
-}
-
-function createParts(){
-
-partsContainer.innerHTML="";
-
-PARTS.forEach(part=>{
-
-const card=document.createElement("div");
-
-card.className="partCard";
-
-card.id=part;
-
-card.innerHTML=`
-
-<div class="partTitle">
-
-${part}
-
-</div>
-
-<div style="font-size:13px">
-
-${PART_NAMES[part]}
-
-</div>
-
-<div class="partStatus">
-
-Waiting...
-
-</div>
-
-<div class="progress">
-
-<div class="progressFill"
-
-id="${part}-progress">
-
-</div>
-
-</div>
-
-`;
-
-card.onclick=()=>showPart(part);
-
-partsContainer.appendChild(card);
+    orderDiv.appendChild(card);
 
 });
 
-}
+// ----------------------
+// Makine listesini oluştur
+// ----------------------
 
-function createMachinePanel(){
+machines.forEach(machine => {
 
-machineStatusContainer.innerHTML="";
+    const card = document.createElement("div");
 
-MACHINES.forEach(machine=>{
+    card.className = "machine";
 
-const card=document.createElement("div");
+    card.innerHTML = "🟢 " + machine;
 
-card.className="machineStatusCard";
-
-card.innerHTML=`
-
-<h3>${machine}</h3>
-
-<div class="badge badgeIdle"
-
-id="badge-${machine}">
-
-IDLE
-
-</div>
-
-<div id="machine-part-${machine}"
-
-style="margin-top:10px">
-
--
-
-</div>
-
-<div class="progress">
-
-<div class="progressFill"
-
-id="machine-progress-${machine}">
-
-</div>
-
-</div>
-
-`;
-
-machineStatusContainer.appendChild(card);
+    machineDiv.appendChild(card);
 
 });
 
-}
+// ----------------------
+// Buton
+// ----------------------
 
-function showPart(part){
+startButton.addEventListener("click", startSimulation);
 
-let html="<h2>"+part+"</h2><br>";
+// =====================================
+// API
+// =====================================
 
-schedule
+async function loadSchedule(){
 
-.filter(x=>x.part==part)
+    const response = await fetch(API_URL + "/schedule");
 
-.forEach(op=>{
-
-html+=`
-
-<p>
-
-<b>${op.operation}</b>
-
-<br>
-
-${op.machine}
-
-<br>
-
-${op.start} - ${op.finish} min
-
-</p>
-
-<hr>
-
-`;
-
-});
-
-informationContent.innerHTML=html;
+    return await response.json();
 
 }
 
-/*====================================================
-SIMULATION
-====================================================*/
+async function loadStatistics(){
 
-function getActiveOperations(minute){
+    const response = await fetch(API_URL + "/statistics");
 
-    return schedule.filter(op=>{
-
-        return minute>=op.start && minute<op.finish;
-
-    });
+    return await response.json();
 
 }
 
-function resetFactory(){
+// =====================================
+// Simulation
+// =====================================
 
-    PARTS.forEach(part=>{
+async function startSimulation(){
 
-        const card=document.getElementById(part);
+    startButton.disabled = true;
 
-        card.classList.remove("partActive");
-        card.classList.remove("partFinished");
+    simulationArea.innerHTML = "<h3>Loading production plan...</h3>";
 
-        card.querySelector(".partStatus").innerHTML="Waiting...";
+    try{
 
-        document.getElementById(part+"-progress").style.width="0%";
+        const schedule = await loadSchedule();
 
-    });
+        const statistics = await loadStatistics();
 
-    MACHINES.forEach(machine=>{
+        console.log(schedule);
 
-        document.getElementById("badge-"+machine).className="badge badgeIdle";
+        console.log(statistics);
 
-        document.getElementById("badge-"+machine).innerHTML="IDLE";
+        showSchedule(schedule);
 
-        document.getElementById("machine-part-"+machine).innerHTML="-";
+        showStatistics(statistics);
 
-        document.getElementById("machine-progress-"+machine).style.width="0%";
+    }
 
-        const card=document.getElementById(machine);
+    catch(error){
 
-        if(card){
+        console.error(error);
 
-            card.classList.remove("machineActive");
+        alert("Backend bağlantısı kurulamadı.");
 
-        }
+    }
 
-    });
-
-}
-
-function updateFactory(minute){
-
-    resetFactory();
-
-    timer.innerHTML=minute+" min";
-
-    const active=getActiveOperations(minute);
-
-    active.forEach(op=>{
-
-        /* PART */
-
-        const part=document.getElementById(op.part);
-
-        part.classList.add("partActive");
-
-        part.querySelector(".partStatus").innerHTML=
-
-        op.operation;
-
-        const p=((minute-op.start)/(op.finish-op.start))*100;
-
-        document.getElementById(op.part+"-progress")
-
-        .style.width=Math.min(100,p)+"%";
-
-
-
-        /* MACHINE PANEL */
-
-        document.getElementById("badge-"+op.machine)
-
-        .className="badge badgeBusy";
-
-        document.getElementById("badge-"+op.machine)
-
-        .innerHTML="RUNNING";
-
-        document.getElementById("machine-part-"+op.machine)
-
-        .innerHTML=op.part;
-
-
-
-        document.getElementById("machine-progress-"+op.machine)
-
-        .style.width=Math.min(100,p)+"%";
-
-
-
-        /* MACHINE CARD */
-
-        const machine=document.getElementById(op.machine);
-
-        if(machine){
-
-            machine.classList.add("machineActive");
-
-            machine.querySelector(".currentPart")
-
-            .innerHTML=op.part;
-
-        }
-
-    });
+    startButton.disabled = false;
 
 }
 
-function finishSimulation(){
+// =====================================
+// Schedule Table
+// =====================================
 
-    clearInterval(simulation);
+function showSchedule(schedule){
 
-    simulation=null;
+    let html = `
+        <h3>Classical FIFO Schedule</h3>
 
-    PARTS.forEach(part=>{
+        <table border="1" cellpadding="6">
 
-        document.getElementById(part)
+        <tr>
 
-        .classList.remove("partActive");
+            <th>Part</th>
 
-        document.getElementById(part)
+            <th>Machine</th>
 
-        .classList.add("partFinished");
+            <th>Operation</th>
+
+            <th>Start</th>
+
+            <th>Finish</th>
+
+        </tr>
+    `;
+
+    schedule.forEach(op=>{
+
+        html += `
+        <tr>
+
+            <td>${op.part}</td>
+
+            <td>${op.machine}</td>
+
+            <td>${op.operation}</td>
+
+            <td>${op.start}</td>
+
+            <td>${op.finish}</td>
+
+        </tr>
+        `;
 
     });
 
-    informationContent.innerHTML=`
+    html += "</table>";
 
-    <h2>
+    simulationArea.innerHTML = html;
 
-    Simulation Finished
+}
 
-    </h2>
+// =====================================
+// Statistics
+// =====================================
 
-    <br>
+function showStatistics(stats){
 
-    Makespan :
-
-    ${statistics.makespan}
+    simulationArea.innerHTML += `
 
     <br><br>
 
-    Bottleneck :
+    <h3>Production Statistics</h3>
 
-    ${statistics.bottleneck}
+    <p><b>Makespan:</b> ${stats.makespan}</p>
 
-    <br><br>
+    <p><b>Bottleneck:</b> ${stats.bottleneck}</p>
 
-    Average Utilization :
+    <p><b>Operations:</b> ${stats.operations}</p>
 
-    ${utilization.innerHTML}
+    <p><b>Parts:</b> ${stats.parts}</p>
 
     `;
 
 }
-
-function startSimulation(){
-
-    if(simulation) return;
-
-    currentMinute=0;
-
-    simulation=setInterval(()=>{
-
-        updateFactory(currentMinute);
-
-        currentMinute++;
-
-        if(currentMinute>statistics.makespan){
-
-            finishSimulation();
-
-        }
-
-    },400);
-
-}
-
-
-
-/*====================================================
-EVENTS
-====================================================*/
-
-startButton.onclick=()=>{
-
-    startSimulation();
-
-};
-
-pauseButton.onclick=()=>{
-
-    if(simulation){
-
-        clearInterval(simulation);
-
-        simulation=null;
-
-    }
-
-};
-
-
-
-/*====================================================
-MACHINE CLICK
-====================================================*/
-
-MACHINES.forEach(machine=>{
-
-    const card=document.getElementById(machine);
-
-    if(card){
-
-        card.onclick=()=>{
-
-            let html="<h2>"+machine+"</h2><br>";
-
-            schedule
-
-            .filter(x=>x.machine==machine)
-
-            .forEach(op=>{
-
-                html+=`
-
-                <p>
-
-                <b>${op.part}</b>
-
-                <br>
-
-                ${op.operation}
-
-                <br>
-
-                ${op.start} - ${op.finish} min
-
-                </p>
-
-                <hr>
-
-                `;
-
-            });
-
-            informationContent.innerHTML=html;
-
-        };
-
-    }
-
-});
