@@ -2,3 +2,4 @@ plotly
 fastapi
 uvicorn
 pydantic
+matplotlib
