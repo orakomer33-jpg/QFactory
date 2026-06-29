@@ -1,9 +1,8 @@
-// ===============================
-// QFactory
-// Aircraft Manufacturing Simulator
-// ===============================
+// =====================================
+// QFactory Frontend
+// =====================================
 
-// Production Orders
+const API_URL = "https://qfactory.onrender.com";
 
 const parts = [
     "Wing Bracket",
@@ -13,8 +12,6 @@ const parts = [
     "Bulkhead Plate",
     "Seat Rail Support"
 ];
-
-// Factory Machines
 
 const machines = [
     "CNC-1",
@@ -30,162 +27,179 @@ const machines = [
     "CMM"
 ];
 
-// -------------------------------
-// Production Orders
-// -------------------------------
-
 const orderDiv = document.getElementById("orders");
+const machineDiv = document.getElementById("machines");
+const startButton = document.getElementById("startButton");
+const simulationArea = document.getElementById("simulationArea");
+
+// ----------------------
+// Üretim emirlerini oluştur
+// ----------------------
 
 parts.forEach(part => {
 
     const card = document.createElement("div");
 
-    card.innerHTML = part;
-
     card.className = "card";
+
+    card.innerHTML = part;
 
     orderDiv.appendChild(card);
 
 });
 
-// -------------------------------
-// Machine Status
-// -------------------------------
-
-const machineDiv = document.getElementById("machines");
+// ----------------------
+// Makine listesini oluştur
+// ----------------------
 
 machines.forEach(machine => {
 
     const card = document.createElement("div");
 
-    card.innerHTML = "🟢 " + machine;
-
     card.className = "machine";
 
-    card.id = "status-" + machine;
+    card.innerHTML = "🟢 " + machine;
 
     machineDiv.appendChild(card);
 
 });
 
-// -------------------------------
-// Button
-// -------------------------------
-
-const startButton = document.getElementById("startButton");
+// ----------------------
+// Buton
+// ----------------------
 
 startButton.addEventListener("click", startSimulation);
 
-// -------------------------------
-// Machine Color Functions
-// -------------------------------
+// =====================================
+// API
+// =====================================
 
-function activateMachine(id){
+async function loadSchedule(){
 
-    const machine = document.getElementById(id);
+    const response = await fetch(API_URL + "/schedule");
 
-    if(machine){
-
-        machine.style.background = "#d32f2f";
-
-    }
+    return await response.json();
 
 }
 
-function deactivateMachine(id){
+async function loadStatistics(){
 
-    const machine = document.getElementById(id);
+    const response = await fetch(API_URL + "/statistics");
 
-    if(machine){
-
-        machine.style.background = "#43a047";
-
-    }
+    return await response.json();
 
 }
 
-// -------------------------------
-// Sleep
-// -------------------------------
-
-function sleep(ms){
-
-    return new Promise(resolve => setTimeout(resolve, ms));
-
-}
-
-// -------------------------------
+// =====================================
 // Simulation
-// -------------------------------
+// =====================================
 
 async function startSimulation(){
 
     startButton.disabled = true;
 
-    // CNC
+    simulationArea.innerHTML = "<h3>Loading production plan...</h3>";
 
-    activateMachine("CNC-1");
+    try{
 
-    await sleep(1500);
+        const schedule = await loadSchedule();
 
-    deactivateMachine("CNC-1");
+        const statistics = await loadStatistics();
 
-    // DRILL
+        console.log(schedule);
 
-    activateMachine("DRILL-1");
+        console.log(statistics);
 
-    await sleep(1500);
+        showSchedule(schedule);
 
-    deactivateMachine("DRILL-1");
+        showStatistics(statistics);
 
-    // REAMING
+    }
 
-    activateMachine("REAMING");
+    catch(error){
 
-    await sleep(1500);
+        console.error(error);
 
-    deactivateMachine("REAMING");
+        alert("Backend bağlantısı kurulamadı.");
 
-    // BORING
-
-    activateMachine("BORING");
-
-    await sleep(1500);
-
-    deactivateMachine("BORING");
-
-    // DEBURRING
-
-    activateMachine("DEBURRING");
-
-    await sleep(1500);
-
-    deactivateMachine("DEBURRING");
-
-    // CLEANING
-
-    activateMachine("CLEANING");
-
-    await sleep(1500);
-
-    deactivateMachine("CLEANING");
-
-    // RIVETING
-
-    activateMachine("RIVETING-1");
-
-    await sleep(1500);
-
-    deactivateMachine("RIVETING-1");
-
-    // CMM
-
-    activateMachine("CMM");
-
-    await sleep(1500);
-
-    deactivateMachine("CMM");
+    }
 
     startButton.disabled = false;
+
+}
+
+// =====================================
+// Schedule Table
+// =====================================
+
+function showSchedule(schedule){
+
+    let html = `
+        <h3>Classical FIFO Schedule</h3>
+
+        <table border="1" cellpadding="6">
+
+        <tr>
+
+            <th>Part</th>
+
+            <th>Machine</th>
+
+            <th>Operation</th>
+
+            <th>Start</th>
+
+            <th>Finish</th>
+
+        </tr>
+    `;
+
+    schedule.forEach(op=>{
+
+        html += `
+        <tr>
+
+            <td>${op.part}</td>
+
+            <td>${op.machine}</td>
+
+            <td>${op.operation}</td>
+
+            <td>${op.start}</td>
+
+            <td>${op.finish}</td>
+
+        </tr>
+        `;
+
+    });
+
+    html += "</table>";
+
+    simulationArea.innerHTML = html;
+
+}
+
+// =====================================
+// Statistics
+// =====================================
+
+function showStatistics(stats){
+
+    simulationArea.innerHTML += `
+
+    <br><br>
+
+    <h3>Production Statistics</h3>
+
+    <p><b>Makespan:</b> ${stats.makespan}</p>
+
+    <p><b>Bottleneck:</b> ${stats.bottleneck}</p>
+
+    <p><b>Operations:</b> ${stats.operations}</p>
+
+    <p><b>Parts:</b> ${stats.parts}</p>
+
+    `;
 
 }
