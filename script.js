@@ -1,205 +1,505 @@
-// =====================================
-// QFactory Frontend
-// =====================================
+/*==================================================
+QFactory
+script.js
+PART 1 / 2
+==================================================*/
 
-const API_URL = "https://qfactory.onrender.com";
+const API_URL="https://qfactory.onrender.com";
 
-const parts = [
-    "Wing Bracket",
-    "Frame Support",
-    "Spar Joint",
-    "Stringer Bracket",
-    "Bulkhead Plate",
-    "Seat Rail Support"
+let schedule=[];
+let statistics={};
+
+let currentMinute=0;
+let timer=null;
+
+/*=========================
+DOM
+=========================*/
+
+const ordersDiv=document.getElementById("orders");
+
+const machinesDiv=document.getElementById("machines");
+
+const info=document.getElementById("informationContent");
+
+const startButton=document.getElementById("startButton");
+
+const bottom=document.getElementById("bottomContent");
+
+/*=========================
+DATA
+=========================*/
+
+const PARTS={
+
+P101:"Wing Bracket",
+
+P102:"Frame Support",
+
+P103:"Spar Joint",
+
+P104:"Stringer Bracket",
+
+P105:"Bulkhead Plate",
+
+P106:"Seat Rail Support"
+
+};
+
+const MACHINES=[
+
+"CNC-1",
+
+"CNC-2",
+
+"DRILL-1",
+
+"DRILL-2",
+
+"REAMING-1",
+
+"BORING-1",
+
+"DEBURRING-1",
+
+"CLEANING-1",
+
+"RIVETING-1",
+
+"RIVETING-2",
+
+"CMM-1"
+
 ];
 
-const machines = [
-    "CNC-1",
-    "CNC-2",
-    "DRILL-1",
-    "DRILL-2",
-    "REAMING",
-    "BORING",
-    "DEBURRING",
-    "CLEANING",
-    "RIVETING-1",
-    "RIVETING-2",
-    "CMM"
-];
+/*=========================
+LOAD
+=========================*/
 
-const orderDiv = document.getElementById("orders");
-const machineDiv = document.getElementById("machines");
-const startButton = document.getElementById("startButton");
-const simulationArea = document.getElementById("simulationArea");
+window.onload=async()=>{
 
-// ----------------------
-// Üretim emirlerini oluştur
-// ----------------------
+await loadBackend();
 
-parts.forEach(part => {
+createOrders();
 
-    const card = document.createElement("div");
+createMachineStatus();
 
-    card.className = "card";
+showStatistics();
 
-    card.innerHTML = part;
+};
 
-    orderDiv.appendChild(card);
+/*=========================
+BACKEND
+=========================*/
+
+async function loadBackend(){
+
+schedule=await fetch(API_URL+"/schedule")
+
+.then(r=>r.json());
+
+statistics=await fetch(API_URL+"/statistics")
+
+.then(r=>r.json());
+
+}
+
+/*=========================
+ORDERS
+=========================*/
+
+function createOrders(){
+
+ordersDiv.innerHTML="";
+
+Object.keys(PARTS).forEach(part=>{
+
+const card=document.createElement("div");
+
+card.className="orderCard";
+
+card.id=part;
+
+card.innerHTML=`
+
+${part}
+
+<br>
+
+<span style="font-size:13px">
+
+${PARTS[part]}
+
+</span>
+
+`;
+
+card.onclick=()=>showPart(part);
+
+ordersDiv.appendChild(card);
 
 });
 
-// ----------------------
-// Makine listesini oluştur
-// ----------------------
+}
 
-machines.forEach(machine => {
+/*=========================
+RIGHT PANEL
+=========================*/
 
-    const card = document.createElement("div");
+function createMachineStatus(){
 
-    card.className = "machine";
+machinesDiv.innerHTML="";
 
-    card.innerHTML = "🟢 " + machine;
+MACHINES.forEach(machine=>{
 
-    machineDiv.appendChild(card);
+const row=document.createElement("div");
+
+row.className="machineStatus";
+
+row.id="status-"+machine;
+
+row.innerHTML=`
+
+<div>
+
+<span class="machineDot"></span>
+
+${machine}
+
+</div>
+
+<div id="machineCurrent-${machine}">
+
+IDLE
+
+</div>
+
+`;
+
+row.onclick=()=>showMachine(machine);
+
+machinesDiv.appendChild(row);
 
 });
 
-// ----------------------
-// Buton
-// ----------------------
+}
 
-startButton.addEventListener("click", startSimulation);
+/*=========================
+PART DETAILS
+=========================*/
 
-// =====================================
-// API
-// =====================================
+function showPart(part){
 
-async function loadSchedule(){
+let html="<h2>"+part+"</h2><hr>";
 
-    const response = await fetch(API_URL + "/schedule");
+schedule
 
-    return await response.json();
+.filter(x=>x.part===part)
+
+.forEach(op=>{
+
+html+=`
+
+<p>
+
+<b>${op.operation}</b>
+
+<br>
+
+Machine :
+
+${op.machine}
+
+<br>
+
+${op.start} - ${op.finish} min
+
+</p>
+
+<hr>
+
+`;
+
+});
+
+info.innerHTML=html;
 
 }
 
-async function loadStatistics(){
+/*=========================
+MACHINE DETAILS
+=========================*/
 
-    const response = await fetch(API_URL + "/statistics");
+function showMachine(machine){
 
-    return await response.json();
+let html="<h2>"+machine+"</h2><hr>";
 
-}
+schedule
 
-// =====================================
-// Simulation
-// =====================================
+.filter(x=>x.machine===machine)
 
-async function startSimulation(){
+.forEach(op=>{
 
-    startButton.disabled = true;
+html+=`
 
-    simulationArea.innerHTML = "<h3>Loading production plan...</h3>";
+<p>
 
-    try{
+<b>${op.part}</b>
 
-        const schedule = await loadSchedule();
+<br>
 
-        const statistics = await loadStatistics();
+${op.operation}
 
-        console.log(schedule);
+<br>
 
-        console.log(statistics);
+${op.start} - ${op.finish}
 
-        showSchedule(schedule);
+</p>
 
-        showStatistics(statistics);
+<hr>
 
-    }
+`;
 
-    catch(error){
+});
 
-        console.error(error);
-
-        alert("Backend bağlantısı kurulamadı.");
-
-    }
-
-    startButton.disabled = false;
+info.innerHTML=html;
 
 }
 
-// =====================================
-// Schedule Table
-// =====================================
+/*=========================
+BOTTOM PANEL
+=========================*/
 
-function showSchedule(schedule){
+function showStatistics(){
 
-    let html = `
-        <h3>Classical FIFO Schedule</h3>
+bottom.innerHTML=`
 
-        <table border="1" cellpadding="6">
+<table>
 
-        <tr>
+<tr>
 
-            <th>Part</th>
+<th>Makespan</th>
 
-            <th>Machine</th>
+<th>Bottleneck</th>
 
-            <th>Operation</th>
+</tr>
 
-            <th>Start</th>
+<tr>
 
-            <th>Finish</th>
+<td>${statistics.makespan}</td>
 
-        </tr>
-    `;
+<td>${statistics.bottleneck}</td>
 
-    schedule.forEach(op=>{
+</tr>
 
-        html += `
-        <tr>
+</table>
 
-            <td>${op.part}</td>
+`;
 
-            <td>${op.machine}</td>
+}
 
-            <td>${op.operation}</td>
+/*=========================================
+SIMULATION
+=========================================*/
 
-            <td>${op.start}</td>
+function getActiveOperations(minute){
 
-            <td>${op.finish}</td>
+    return schedule.filter(op=>{
 
-        </tr>
-        `;
+        return minute>=op.start && minute<op.finish;
 
     });
 
-    html += "</table>";
+}
 
-    simulationArea.innerHTML = html;
+function resetFactory(){
+
+    Object.keys(PARTS).forEach(part=>{
+
+        document.getElementById(part)
+
+        .classList.remove("orderActive");
+
+        document.getElementById(part)
+
+        .classList.remove("orderFinished");
+
+    });
+
+    MACHINES.forEach(machine=>{
+
+        const status=document.getElementById("status-"+machine);
+
+        status.classList.remove("machineBusy");
+
+        document.getElementById("machineCurrent-"+machine)
+
+        .innerHTML="IDLE";
+
+        const card=document.getElementById(machine);
+
+        if(card){
+
+            card.classList.remove("active");
+
+            card.classList.remove("finished");
+
+            card.querySelector(".currentPart")
+
+            .innerHTML="IDLE";
+
+        }
+
+    });
 
 }
 
-// =====================================
-// Statistics
-// =====================================
+function playMinute(minute){
 
-function showStatistics(stats){
+    resetFactory();
 
-    simulationArea.innerHTML += `
+    const active=getActiveOperations(minute);
 
-    <br><br>
+    active.forEach(op=>{
 
-    <h3>Production Statistics</h3>
+        /* LEFT ORDER */
 
-    <p><b>Makespan:</b> ${stats.makespan}</p>
+        const order=document.getElementById(op.part);
 
-    <p><b>Bottleneck:</b> ${stats.bottleneck}</p>
+        order.classList.add("orderActive");
 
-    <p><b>Operations:</b> ${stats.operations}</p>
+        /* RIGHT STATUS */
 
-    <p><b>Parts:</b> ${stats.parts}</p>
+        const row=document.getElementById(
+
+            "status-"+op.machine
+
+        );
+
+        row.classList.add("machineBusy");
+
+        document.getElementById(
+
+            "machineCurrent-"+op.machine
+
+        ).innerHTML=op.part;
+
+        /* CENTER MACHINE */
+
+        const machine=document.getElementById(op.machine);
+
+        if(machine){
+
+            machine.classList.add("active");
+
+            machine.querySelector(".currentPart")
+
+            .innerHTML=op.part;
+
+        }
+
+    });
+
+}
+
+function finishSimulation(){
+
+    clearInterval(timer);
+
+    timer=null;
+
+    Object.keys(PARTS).forEach(part=>{
+
+        document.getElementById(part)
+
+        .classList.remove("orderActive");
+
+        document.getElementById(part)
+
+        .classList.add("orderFinished");
+
+    });
+
+    MACHINES.forEach(machine=>{
+
+        const card=document.getElementById(machine);
+
+        if(card){
+
+            card.classList.remove("active");
+
+            card.classList.add("finished");
+
+            card.querySelector(".currentPart")
+
+            .innerHTML="READY";
+
+        }
+
+    });
+
+    bottom.innerHTML=`
+
+    <h2>
+
+    Simulation Finished
+
+    </h2>
+
+    <br>
+
+    <table>
+
+    <tr>
+
+    <th>Makespan</th>
+
+    <th>Bottleneck</th>
+
+    </tr>
+
+    <tr>
+
+    <td>${statistics.makespan}</td>
+
+    <td>${statistics.bottleneck}</td>
+
+    </tr>
+
+    </table>
 
     `;
 
 }
+
+function startSimulation(){
+
+    if(timer) return;
+
+    currentMinute=0;
+
+    timer=setInterval(()=>{
+
+        playMinute(currentMinute);
+
+        currentMinute++;
+
+        if(currentMinute>statistics.makespan){
+
+            finishSimulation();
+
+        }
+
+    },400);
+
+}
+
+/*=========================================
+EVENTS
+=========================================*/
+
+startButton.onclick=()=>{
+
+    startSimulation();
+
+};
