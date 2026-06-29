@@ -97,3 +97,55 @@ class FIFOScheduler:
                 utilization[machine["name"]] = machine["available"]
     
         return utilization
+
+    def calculate_statistics(self, schedule):
+    
+        machine_busy = {}
+    
+        makespan = 0
+    
+        # Her makinenin çalışma süresi
+        for row in schedule:
+    
+            machine = row["machine"]
+    
+            duration = row["finish"] - row["start"]
+    
+            machine_busy[machine] = machine_busy.get(machine, 0) + duration
+    
+            if row["finish"] > makespan:
+                makespan = row["finish"]
+    
+        utilization = {}
+    
+        idle = {}
+    
+        bottleneck = ""
+    
+        max_busy = -1
+    
+        for machine in machine_busy:
+    
+            busy = machine_busy[machine]
+    
+            utilization[machine] = round((busy / makespan) * 100, 2)
+    
+            idle[machine] = makespan - busy
+    
+            if busy > max_busy:
+    
+                max_busy = busy
+    
+                bottleneck = machine
+    
+        return {
+    
+            "makespan": makespan,
+    
+            "utilization": utilization,
+    
+            "idle": idle,
+    
+            "bottleneck": bottleneck
+    
+        }
