@@ -1,19 +1,38 @@
-let time = 0;
-const startBtn = document.getElementById('startBtn');
+const API_URL = "https://qfactory.onrender.com";
 
-startBtn.addEventListener('click', async () => {
-    // Backend'den veriyi çek
-    const response = await fetch('http://localhost:8000/schedule');
-    const schedule = await response.json();
+document.getElementById('startBtn').addEventListener('click', async () => {
+    const res = await fetch(`${API_URL}/schedule`);
+    const schedule = await res.json();
     
-    // Sayaç 3 saniyede 1 artacak şekilde (senin isteğinle)
-    let interval = setInterval(() => {
+    // Parçaları ve Makineleri Ekrana Bas
+    const partsSet = [...new Set(schedule.map(s => s.part))];
+    const machinesSet = [...new Set(schedule.map(s => s.machine))];
+    
+    partsSet.forEach(p => document.getElementById('parts-list').innerHTML += `<div id="${p}" class="box">${p}</div>`);
+    machinesSet.forEach(m => document.getElementById('machines-list').innerHTML += `<div id="${m}" class="box">${m}</div>`);
+
+    // Sayaç Mantığı (Her 3 saniyede 1 dakika)
+    let time = 0;
+    const timerEl = document.getElementById('timer');
+    
+    const interval = setInterval(() => {
         time++;
-        document.getElementById('timer').innerText = `${time} dk`;
-        
-        // Burada schedule içindeki 'start' ve 'finish' değerlerine göre 
-        // DOM üzerindeki .box elemanlarını .busy class'ı ile güncelle
-        
-        if (time >= 200) clearInterval(interval); // Örnek durma noktası
+        timerEl.innerText = `${time} min`;
+
+        // İşlemde olanları kontrol et
+        schedule.forEach(op => {
+            const partEl = document.getElementById(op.part);
+            const machEl = document.getElementById(op.machine);
+
+            if (time >= op.start && time < op.finish) {
+                partEl.classList.add('busy');
+                machEl.classList.add('busy');
+            } else if (time === op.finish) {
+                partEl.classList.remove('busy');
+                machEl.classList.remove('busy');
+            }
+        });
+
+        if (time > 200) clearInterval(interval); // Örnek limit
     }, 3000);
 });
