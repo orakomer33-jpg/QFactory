@@ -1,6 +1,11 @@
-body { background: #121212; color: white; text-align: center; overflow-x: hidden; }
-.factory-container { display: flex; justify-content: space-between; padding: 20px; position: relative; }
-.column { display: flex; flex-direction: column; gap: 10px; width: 150px; z-index: 2; }
-.box { padding: 10px; border: 1px solid #444; background: #2e7d32; }
-.busy { background: #d32f2f !important; }
+body { background: #121212; color: #e0e0e0; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; overflow-x: hidden; }
+header { padding: 20px; border-bottom: 2px solid #333; }
+#startBtn { padding: 15px 40px; font-size: 1.2rem; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 5px; margin-bottom: 10px; }
+#progress-container { width: 50%; height: 20px; background: #444; margin: 10px auto; border-radius: 10px; overflow: hidden; }
+#progress-bar { width: 0%; height: 100%; background: #4caf50; color: white; transition: 0.3s; font-size: 0.8rem; line-height: 20px; }
+.factory-container { display: flex; justify-content: space-between; padding: 40px; position: relative; height: 600px; }
+.column { display: flex; flex-direction: column; gap: 10px; width: 160px; z-index: 2; }
+.box { padding: 12px; border: 1px solid #444; background: #2e7d32; color: white; border-radius: 4px; }
+.busy { background: #d32f2f !important; border-color: #ff5252; box-shadow: 0 0 10px #d32f2f; }
 #flowCanvas { position: absolute; top: 0; left: 0; pointer-events: none; z-index: 1; }
+#timer { font-size: 1.5rem; color: #ffeb3b; margin-top: 10px; }
