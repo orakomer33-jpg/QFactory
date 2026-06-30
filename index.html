@@ -2,24 +2,20 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>QFactory Production System</title>
+    <title>QFactory</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <button id="startBtn">START FACTORY</button>
-        <h1>Üretim Planlama: Klasik vs Kuantum</h1>
+        <h2>Üretim Planlama: Klasik vs Kuantum</h2>
         <div id="timer">0 min</div>
     </header>
-
     <main class="factory-container">
         <div id="parts-list" class="column"><h3>PARÇALAR</h3></div>
-        <div id="visualizer"></div>
+        <canvas id="flowCanvas"></canvas> <!-- Çizgiler için -->
         <div id="machines-list" class="column"><h3>MAKİNELER</h3></div>
     </main>
-
-    <div id="resultTable"></div>
-
     <script src="script.js"></script>
 </body>
 </html>
