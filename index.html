@@ -1,130 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="tr">
 <head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>QFactory</title>
-
-<link rel="stylesheet" href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+    <header>
+        <button id="startBtn">START FACTORY</button>
+        <h1>Üretim Planlama: Klasik vs Kuantum</h1>
+        <div id="timer">0 dk</div>
+    </header>
 
-<div class="header">
+    <main class="factory-floor">
+        <div id="parts" class="box-container"></div>
+        <div id="visualizer"></div>
+        <div id="machines" class="box-container"></div>
+    </main>
 
-<h1>QFactory</h1>
-<button id="startButton">▶ Start Simulation</button>
-
-<div id="simulationArea"></div>
-<p>Aircraft Manufacturing Digital Twin</p>
-
-</div>
-
-<div class="container">
-
-<div class="left-panel">
-
-<h2>Production Orders</h2>
-
-<div id="orders"></div>
-
-</div>
-
-<div class="center-panel">
-
-<h2>Factory</h2>
-
-<div id="factory">
-
-<div class="row">
-
-<div class="machine-box" id="CNC-1">CNC-1</div>
-
-<div class="machine-box" id="CNC-2">CNC-2</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="DRILL-1">DRILL-1</div>
-
-<div class="machine-box" id="DRILL-2">DRILL-2</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="REAMING">REAMING</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="BORING">BORING</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="DEBURRING">DEBURRING</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="CLEANING">CLEANING</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="RIVETING-1">RIVETING-1</div>
-
-<div class="machine-box" id="RIVETING-2">RIVETING-2</div>
-
-</div>
-
-<div class="arrow">↓</div>
-
-<div class="row">
-
-<div class="machine-box" id="CMM">CMM</div>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="right-panel">
-
-<h2>Machine Status</h2>
-
-<div id="machines"></div>
-
-</div>
-
-</div>
-
-<script src="script.js"></script>
-
+    <div id="resultTable"></div>
+    <script src="script.js"></script>
 </body>
-
 </html>
